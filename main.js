@@ -1,6 +1,6 @@
 import './style.css';
 import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 // Setup
 
@@ -26,6 +26,7 @@ const material = new THREE.MeshStandardMaterial({ color: 0xff6347 });
 const torus = new THREE.Mesh(geometry, material);
 
 scene.add(torus);
+
 
 // Lights
 
@@ -69,10 +70,22 @@ const jeffTexture = new THREE.TextureLoader().load('jeff.png');
 
 const jeff = new THREE.Mesh(new THREE.BoxGeometry(3, 3, 3), new THREE.MeshBasicMaterial({ map: jeffTexture }));
 
-scene.add(jeff);
+//scene.add(jeff);
+
+const loader = new GLTFLoader();
+let loaded;
+loader.load('models/scene.glb', (gltf) => {
+    const obj = gltf.scene;
+    
+    obj.name = 'camera';
+    obj.scale.set(20, 20, 20); 
+    obj.position.z = -5;
+    obj.position.x = 3;
+    scene.add(obj);
+  }
+);
 
 // Moon
-
 const moonTexture = new THREE.TextureLoader().load('moon.jpg');
 const normalTexture = new THREE.TextureLoader().load('normal.jpg');
 
@@ -89,9 +102,6 @@ scene.add(moon);
 moon.position.z = 30;
 moon.position.setX(-10);
 
-jeff.position.z = -5;
-jeff.position.x = 2;
-
 // Scroll Animation
 
 function moveCamera() {
@@ -100,8 +110,8 @@ function moveCamera() {
   moon.rotation.y += 0.075;
   moon.rotation.z += 0.05;
 
-  jeff.rotation.y += 0.01;
-  jeff.rotation.z += 0.01;
+  // obj.scene.rotation.y += 0.2; 
+  // obj.scene.rotation.z += 0.2;
 
   camera.position.z = t * -0.01;
   camera.position.x = t * -0.0002;
